@@ -78,6 +78,14 @@ type RedpandaConfig struct {
 	KafkaAPI	SocketAddress	`json:"kafkaApi,omitempty"`
 	AdminAPI	SocketAddress	`json:"admin,omitempty"`
 	DeveloperMode	bool		`json:"developerMode,omitempty"`
+	KafkaAPITLS		KafkaTLS	`json:"kafkaApiTls,omitempty"`
+}
+
+// KafkaTLS configures TLS for redpanda nodes
+// when enabled, there's runtime dependency on cert-manager
+type KafkaTLS struct {
+	Generated bool `json:"generated,omitempty"`
+>>>>>>> WIP
 }
 
 // SocketAddress provide the way to configure the port
