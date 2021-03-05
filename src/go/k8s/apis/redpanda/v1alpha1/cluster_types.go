@@ -12,6 +12,7 @@ package v1alpha1
 import (
 	"fmt"
 
+	cmmeta "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -83,11 +84,25 @@ type RedpandaConfig struct {
 }
 
 // TLSConfig configures TLS for redpanda
-// when KafkaAPIEnabled is set to true, Certificate and Secret with same name as cluster
+// when KafkaAPIEnabled is set to true, one-way TLS verification is enabled
+// with this enabled, Certificate and Secret with same name as cluster
 // this will be created in the cluster namespace
 // secret will contain 'ca.crt' which should be used as trustore when connecting to redpanda
+//
+// if RequireClientAuth is set to true, two-way TLS verification is enabled
+// with this enabled, node and two client certificates will be created
+// node certificate is used by redpanda nodes
+// operator client certificate will be used by redpanda operator to make KafkaAPI calls
+// user client certificate is what redpanda users should use to call KafkaAPI
+// you can retrieve it from secret with name 'cluster-tls-user-client'
+// the secret is stored in the same namespace as redpanda cluster
+// secret's ca.crt should be used as trustore when talking to redpanda
 type TLSConfig struct {
-	KafkaAPIEnabled bool `json:"kafkaApiEnabled,omitempty"`
+	KafkaAPIEnabled bool                    `json:"kafkaApiEnabled,omitempty"`
+	IssuerRef       *cmmeta.ObjectReference `json:"issuerRef,omitempty"`
+	// enables two-way verification on the server side
+	// with this enabled, all kafka API clients will be required to have valid client certificate
+	RequireClientAuth bool `json:"requireClientAuth,omitempty"`
 }
 
 // SocketAddress provide the way to configure the port

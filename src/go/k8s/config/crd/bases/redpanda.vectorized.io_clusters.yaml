@@ -60,13 +60,41 @@ spec:
                         type: integer
                     type: object
                   tls:
-                    description: TLSConfig configures TLS for redpanda when KafkaAPIEnabled
+                    description: "TLSConfig configures TLS for redpanda when KafkaAPIEnabled
                       is set to true, Certificate and Secret with same name as cluster
                       this will be created in the cluster namespace secret will contain
                       'ca.crt' which should be used as trustore when connecting to
-                      redpanda
+                      redpanda \n if RequireClientAuth is set to true, node and two
+                      client certificates will be created node certificate is used
+                      by redpanda nodes operator client certificate will be used by
+                      redpanda operator to make KafkaAPI calls user client certificate
+                      is what redpanda users should use to call KafkaAPI you can retrieve
+                      it from secret with name 'cluster-tls-user-client' the secret
+                      is stored in the same namespace as redpanda cluster secret's
+                      ca.crt should be used as trustore when talking to redpanda"
                     properties:
+                      issuerRef:
+                        description: ObjectReference is a reference to an object with
+                          a given name, kind and group.
+                        properties:
+                          group:
+                            description: Group of the resource being referred to.
+                            type: string
+                          kind:
+                            description: Kind of the resource being referred to.
+                            type: string
+                          name:
+                            description: Name of the resource being referred to.
+                            type: string
+                        required:
+                        - name
+                        type: object
                       kafkaApiEnabled:
+                        type: boolean
+                      requireClientAuth:
+                        description: enables two-way verification on the server side
+                          with this enabled, all kafka API clients will be required
+                          to have valid client certificate
                         type: boolean
                     type: object
                 type: object

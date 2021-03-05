@@ -51,12 +51,13 @@ const (
 // focusing on the management of redpanda cluster
 type StatefulSetResource struct {
 	k8sclient.Client
-	scheme        *runtime.Scheme
-	pandaCluster  *redpandav1alpha1.Cluster
-	serviceFQDN   string
-	serviceName   string
-	certSecretKey types.NamespacedName
-	logger        logr.Logger
+	scheme                      *runtime.Scheme
+	pandaCluster                *redpandav1alpha1.Cluster
+	serviceFQDN                 string
+	serviceName                 string
+	redpandaCertSecretKey       types.NamespacedName
+	internalClientCertSecretKey *types.NamespacedName
+	logger                      logr.Logger
 
 	LastObservedState *appsv1.StatefulSet
 }
@@ -68,11 +69,12 @@ func NewStatefulSet(
 	scheme *runtime.Scheme,
 	serviceFQDN string,
 	serviceName string,
-	certSecretKey types.NamespacedName,
+	redpandaCertSecretKey types.NamespacedName,
+	internalClientCertSecretKey *types.NamespacedName,
 	logger logr.Logger,
 ) *StatefulSetResource {
 	return &StatefulSetResource{
-		client, scheme, pandaCluster, serviceFQDN, serviceName, certSecretKey, logger.WithValues("Kind", statefulSetKind()), nil,
+		client, scheme, pandaCluster, serviceFQDN, serviceName, redpandaCertSecretKey, internalClientCertSecretKey, logger.WithValues("Kind", statefulSetKind()), nil,
 	}
 }
 
@@ -388,7 +390,7 @@ func (r *StatefulSetResource) Obj() (k8sclient.Object, error) {
 			Name: "tlscert",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName: r.certSecretKey.Name,
+					SecretName: r.redpandaCertSecretKey.Name,
 				},
 			},
 		})

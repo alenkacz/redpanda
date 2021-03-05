@@ -20,6 +20,7 @@ import (
 	redpandav1alpha1 "github.com/vectorizedio/redpanda/src/go/k8s/apis/redpanda/v1alpha1"
 	"github.com/vectorizedio/redpanda/src/go/k8s/pkg/labels"
 	"github.com/vectorizedio/redpanda/src/go/k8s/pkg/resources"
+	"github.com/vectorizedio/redpanda/src/go/k8s/pkg/resources/certmanager"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -46,7 +47,9 @@ type ClusterReconciler struct {
 //+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;
 //+kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;
 //+kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch;
-//+kubebuilder:rbac:groups=cert-manager.io,resources=issuers;certificates,verbs=create;get;list;watch;
+//+kubebuilder:rbac:groups=cert-manager.io,resources=issuers,verbs=create;get;list;watch;patch;delete;
+//+kubebuilder:rbac:groups=cert-manager.io,resources=certificates,verbs=create;get;list;watch;patch;delete;
+//+kubebuilder:rbac:groups=cert-manager.io,resources=clusterissuers,verbs=create;get;list;watch;patch;delete;
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -74,15 +77,16 @@ func (r *ClusterReconciler) Reconcile(
 	}
 
 	svc := resources.NewHeadlessService(r.Client, &redpandaCluster, r.Scheme, log)
-	issuer := resources.NewIssuer(r.Client, &redpandaCluster, r.Scheme, log)
-	cert := resources.NewCertificate(r.Client, &redpandaCluster, r.Scheme, issuer, svc.HeadlessServiceFQDN(), log)
-	sts := resources.NewStatefulSet(r.Client, &redpandaCluster, r.Scheme, svc.HeadlessServiceFQDN(), svc.Key().Name, cert.SecretKey(), log)
+	pki := certmanager.NewPki(r.Client, &redpandaCluster, svc.HeadlessServiceFQDN(), r.Scheme, log)
+
+	sts := resources.NewStatefulSet(r.Client, &redpandaCluster, r.Scheme, svc.HeadlessServiceFQDN(),
+		svc.Key().Name, pki.NodeCert(), pki.OperatorClientCert(), log)
+
 	toApply := []resources.Resource{
 		svc,
 		resources.NewNodePortService(r.Client, &redpandaCluster, r.Scheme, log),
 		resources.NewConfigMap(r.Client, &redpandaCluster, r.Scheme, svc.HeadlessServiceFQDN(), log),
-		issuer,
-		cert,
+		pki,
 		sts,
 	}
 
