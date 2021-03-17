@@ -56,6 +56,14 @@ func CreateIfNotExists(
 	return false, nil
 }
 
+func ignoreResource() patch.CalculateOption {
+	return func(current, modified []byte) ([]byte, []byte, error) {
+		fmt.Printf("------- current: %v\n", string(current))
+		fmt.Printf("------- modified: %v\n", string(modified))
+		return current, modified, nil
+	}
+}
+
 // Update ensures resource is updated if necessary. The method calculates patch
 // and applies it if something changed
 func Update(
@@ -65,7 +73,12 @@ func Update(
 	c client.Client,
 	logger logr.Logger,
 ) error {
-	patchResult, err := patch.DefaultPatchMaker.Calculate(current, modified)
+	opts := []patch.CalculateOption{
+		patch.IgnoreStatusFields(),
+		patch.IgnoreVolumeClaimTemplateTypeMetaAndStatus(),
+		ignoreResource(),
+	}
+	patchResult, err := patch.DefaultPatchMaker.Calculate(current, modified, opts...)
 	if err != nil {
 		return err
 	}

@@ -164,6 +164,7 @@ func preparePVCResource(
 	storage redpandav1alpha1.StorageSpec,
 	clusterLabels labels.CommonLabels,
 ) corev1.PersistentVolumeClaim {
+	mode := corev1.PersistentVolumeFilesystem 
 	pvc := corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: namespace,
@@ -177,6 +178,7 @@ func preparePVCResource(
 					corev1.ResourceStorage: resource.MustParse(defaultDatadirCapacity),
 				},
 			},
+			VolumeMode: corev1.PersistentVolumeFilesystem,
 		},
 	}
 
