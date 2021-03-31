@@ -50,6 +50,22 @@ type ClusterSpec struct {
 	Storage StorageSpec `json:"storage,omitempty"`
 	// Cloud storage configuration for cluster
 	CloudStorage CloudStorageConfig `json:"cloudStorage,omitempty"`
+	// Enable and configure pandaproxy
+	PandaProxy PandaProxyConfig `json:"pandaProxy,omitempty"`
+}
+
+// PandaProxyConfig enables and configures pandaproxy
+type PandaProxyConfig struct {
+	// if set to true, pandaproxy will be enabled
+	Enabled bool `json:"enabled,omitempty"`
+	// port for internal communication using pandaproxy
+	Port SocketAddress `json:"port,omitempty"`
+	// when enabled, pandaproxy will be reachable from outside of the cluster.
+	// Port + 1 will be used as port for external communication.
+	ExternalConnectivity ExternalConnectivityConfig `json:"externalConnectivity,omitempty"`
+	// If enabled, communication with pandaproxy over specified port will happen
+	// only via TLS
+	TLS TLSConfig `json:"tls,omitempty"`
 }
 
 // CloudStorageConfig configures the Data Archiving feature in Redpanda
