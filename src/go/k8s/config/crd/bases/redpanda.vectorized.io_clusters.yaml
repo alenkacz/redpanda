@@ -137,7 +137,7 @@ spec:
                         type: integer
                     type: object
                   tls:
-                    description: TLSConfig configures TLS for Redpanda APIs
+                    description: TLSConfigs configures TLS for Redpanda APIs
                     properties:
                       adminApi:
                         description: Configuration of TLS for Admin API

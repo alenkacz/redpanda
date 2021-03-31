@@ -163,11 +163,11 @@ type RedpandaConfig struct {
 	KafkaAPI      SocketAddress `json:"kafkaApi,omitempty"`
 	AdminAPI      SocketAddress `json:"admin,omitempty"`
 	DeveloperMode bool          `json:"developerMode,omitempty"`
-	TLS           TLSConfig     `json:"tls,omitempty"`
+	TLS           TLSConfigs     `json:"tls,omitempty"`
 }
 
-// TLSConfig configures TLS for Redpanda APIs
-type TLSConfig struct {
+// TLSConfigs configures TLS for Redpanda APIs
+type TLSConfigs struct {
 	// Configuration of TLS for Kafka API
 	KafkaAPI KafkaAPITLS `json:"kafkaApi,omitempty"`
 	// Configuration of TLS for Admin API

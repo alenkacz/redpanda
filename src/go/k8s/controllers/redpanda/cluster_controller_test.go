@@ -228,7 +228,7 @@ var _ = Describe("RedPandaCluster controller", func() {
 					Replicas: pointer.Int32Ptr(replicas),
 					Configuration: v1alpha1.RedpandaConfig{
 						KafkaAPI: v1alpha1.SocketAddress{Port: kafkaPort},
-						TLS: v1alpha1.TLSConfig{
+						TLS: v1alpha1.TLSConfigs{
 							KafkaAPI: v1alpha1.KafkaAPITLS{
 								Enabled:           true,
 								RequireClientAuth: true,

@@ -53,7 +53,7 @@ func TestValidateUpdate(t *testing.T) {
 	updatedCluster.Spec.Replicas = &replicas1
 	updatedCluster.Spec.Configuration = v1alpha1.RedpandaConfig{
 		KafkaAPI: v1alpha1.SocketAddress{Port: 1234},
-		TLS: v1alpha1.TLSConfig{
+		TLS: v1alpha1.TLSConfigs{
 			KafkaAPI: v1alpha1.KafkaAPITLS{
 				RequireClientAuth: true,
 				IssuerRef: &cmmeta.ObjectReference{
