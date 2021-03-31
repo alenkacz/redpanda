@@ -163,18 +163,18 @@ type RedpandaConfig struct {
 	KafkaAPI      SocketAddress `json:"kafkaApi,omitempty"`
 	AdminAPI      SocketAddress `json:"admin,omitempty"`
 	DeveloperMode bool          `json:"developerMode,omitempty"`
-	TLS           TLSConfigs     `json:"tls,omitempty"`
+	TLS           TLSConfigs    `json:"tls,omitempty"`
 }
 
 // TLSConfigs configures TLS for Redpanda APIs
 type TLSConfigs struct {
 	// Configuration of TLS for Kafka API
-	KafkaAPI KafkaAPITLS `json:"kafkaApi,omitempty"`
+	KafkaAPI TLSConfig `json:"kafkaApi,omitempty"`
 	// Configuration of TLS for Admin API
 	AdminAPI AdminAPITLS `json:"adminApi,omitempty"`
 }
 
-// KafkaAPITLS configures TLS for redpanda Kafka API
+// TLSConfig configures TLS for redpanda listener
 //
 // If Enabled is set to true, one-way TLS verification is enabled.
 // In that case, a key pair ('tls.crt', 'tls.key') and CA certificate 'ca.crt'
@@ -192,11 +192,11 @@ type TLSConfigs struct {
 // operator. It's possible that you might not need this client certificate in
 // your setup. The client certificate can be retrieved from the Secret named
 // '<redpanda-cluster-name>-admin-client'. 3. user client certificate is
-// available for Redpanda users to call KafkaAPI. The client certificate can be
+// available for Redpanda users to call redpanda api. The client certificate can be
 // retrieved from the Secret named '<redpanda-cluster-name>-user-client'.
 //
 // All TLS secrets are stored in the same namespace as the Redpanda cluster.
-type KafkaAPITLS struct {
+type TLSConfig struct {
 	Enabled bool `json:"enabled,omitempty"`
 	// References cert-manager Issuer or ClusterIssuer. When provided, this
 	// issuer will be used to issue node certificates.

@@ -229,7 +229,7 @@ var _ = Describe("RedPandaCluster controller", func() {
 					Configuration: v1alpha1.RedpandaConfig{
 						KafkaAPI: v1alpha1.SocketAddress{Port: kafkaPort},
 						TLS: v1alpha1.TLSConfigs{
-							KafkaAPI: v1alpha1.KafkaAPITLS{
+							KafkaAPI: v1alpha1.TLSConfig{
 								Enabled:           true,
 								RequireClientAuth: true,
 							},
