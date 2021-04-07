@@ -1,0 +1,30 @@
+# How to test helm chart locally
+
+1. Create kind cluster
+
+```
+kind create cluster
+```
+
+1. Find latest redpanda operator release on the release page https://github.com/vectorizedio/redpanda/releases. Let's say for example last release was v21.4.5
+
+1. Download the oper
+
+1. Create test topic
+```
+kubectl create job createtopic --image vectorized/redpanda:latest -- rpk topic create test --brokers one-node-cluster-0.one-node-cluster.default.svc.cluster.local.:9092 -v
+```
+
+1. Get pod name of your job
+
+```
+kubectl describe job createtopic
+```
+
+The `SuccessfulCreate` event should contain name of created pod
+
+1. View logs from your job to see if topic was created
+
+```
+kubectl logs $NAME_OF_POD
+```
